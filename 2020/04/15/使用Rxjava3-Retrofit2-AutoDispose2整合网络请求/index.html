@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 4.2.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"zinc357.github.io","root":"/","scheme":"Mist","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"always","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":false,"style":"mac"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="Rxjava3已经正式发布，是时候把曾经的Rxjava2升级了。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="使用Rxjava3+Retrofit2+AutoDispose2整合网络请求">
+<meta property="og:url" content="http://zinc357.github.io/2020/04/15/%E4%BD%BF%E7%94%A8Rxjava3-Retrofit2-AutoDispose2%E6%95%B4%E5%90%88%E7%BD%91%E7%BB%9C%E8%AF%B7%E6%B1%82/index.html">
+<meta property="og:site_name" content="英雄可不应该露出悲伤的表情">
+<meta property="og:description" content="Rxjava3已经正式发布，是时候把曾经的Rxjava2升级了。">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2020-04-15T10:41:47.000Z">
+<meta property="article:modified_time" content="2020-04-15T11:37:16.624Z">
+<meta property="article:author" content="Zinc357">
+<meta property="article:tag" content="Android">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="http://zinc357.github.io/2020/04/15/%E4%BD%BF%E7%94%A8Rxjava3-Retrofit2-AutoDispose2%E6%95%B4%E5%90%88%E7%BD%91%E7%BB%9C%E8%AF%B7%E6%B1%82/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>使用Rxjava3+Retrofit2+AutoDispose2整合网络请求 | 英雄可不应该露出悲伤的表情</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">英雄可不应该露出悲伤的表情</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://zinc357.github.io/2020/04/15/%E4%BD%BF%E7%94%A8Rxjava3-Retrofit2-AutoDispose2%E6%95%B4%E5%90%88%E7%BD%91%E7%BB%9C%E8%AF%B7%E6%B1%82/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/image/avatar.png">
+      <meta itemprop="name" content="Zinc357">
+      <meta itemprop="description" content="倾听 感受 思考 <br> 钓鱼 打牌 赛鸟">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="英雄可不应该露出悲伤的表情">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          使用Rxjava3+Retrofit2+AutoDispose2整合网络请求
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2020-04-15 18:41:47 / 修改时间：19:37:16" itemprop="dateCreated datePublished" datetime="2020-04-15T18:41:47+08:00">2020-04-15</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>Rxjava3已经正式发布，是时候把曾经的Rxjava2升级了。</p>
+<a id="more"></a>
+<h1 id="准备依赖"><a href="#准备依赖" class="headerlink" title="准备依赖"></a>准备依赖</h1><p>依赖除了需要<code>Rxjava3</code>、<code>Retrofit2</code>、<code>Autodispose2</code>相关以外，还引入了<code>Moshi</code>用来处理Json序列化。由于没有官方的<code>adapter-rxjava3</code>,这里在github上找到了开源版本。</p>
+<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">implementation <span class="string">"io.reactivex.rxjava3:rxkotlin:3.0.0"</span></span><br><span class="line">implementation <span class="string">'io.reactivex.rxjava3:rxandroid:3.0.0'</span></span><br><span class="line">implementation <span class="string">'com.squareup.retrofit2:retrofit:2.8.1'</span></span><br><span class="line">implementation <span class="string">'com.squareup.retrofit2:converter-moshi:2.8.1'</span></span><br><span class="line">implementation <span class="string">'com.github.fairytale110:adapter-rxjava3:2.7.2'</span></span><br><span class="line">implementation <span class="string">'com.squareup.okhttp3:logging-interceptor:3.13.1'</span></span><br><span class="line">implementation <span class="string">"com.squareup.moshi:moshi-kotlin:1.9.2"</span></span><br><span class="line">kapt <span class="string">"com.squareup.moshi:moshi-kotlin-codegen:1.9.2"</span></span><br><span class="line">implementation <span class="string">'com.uber.autodispose2:autodispose-androidx-lifecycle:2.0.0'</span></span><br></pre></td></tr></table></figure>
+
+<h1 id="RxJava3-RxKotlin3-Retrofit2-搭建网路请求"><a href="#RxJava3-RxKotlin3-Retrofit2-搭建网路请求" class="headerlink" title="RxJava3(RxKotlin3) + Retrofit2 搭建网路请求"></a>RxJava3(RxKotlin3) + Retrofit2 搭建网路请求</h1><h2 id="一般的搭建方法"><a href="#一般的搭建方法" class="headerlink" title="一般的搭建方法"></a>一般的搭建方法</h2><p>首先来构建Retrofit实例,BaseURL以玩安卓为例。</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">val</span> retrofit: Retrofit <span class="keyword">by</span> lazy &#123;</span><br><span class="line">    Retrofit.Builder()</span><br><span class="line">        .addConverterFactory(MoshiConverterFactory.create())</span><br><span class="line">        .addCallAdapterFactory(RxJava3CallAdapterFactory.create())</span><br><span class="line">        .client(</span><br><span class="line">            OkHttpClient.Builder()</span><br><span class="line">                .connectTimeout(<span class="number">15</span>, TimeUnit.SECONDS)</span><br><span class="line">                .readTimeout(<span class="number">15</span>, TimeUnit.SECONDS)</span><br><span class="line">                .writeTimeout(<span class="number">15</span>, TimeUnit.SECONDS)</span><br><span class="line">                .build()</span><br><span class="line">        )</span><br><span class="line">        .baseUrl(<span class="string">"https://www.wanandroid.com"</span>)</span><br><span class="line">        .build()</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>接下来完成请求接口。</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">interface</span> <span class="title">ApiService</span> </span>&#123;</span><br><span class="line">    <span class="meta">@GET(<span class="meta-string">"wxarticle/chapters/json"</span>)</span></span><br><span class="line">    <span class="function"><span class="keyword">fun</span> <span class="title">a</span><span class="params">()</span></span>: Observable&lt;Enttity&gt;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">object</span> Api : ApiService <span class="keyword">by</span> retrofit.create(ApiService::<span class="class"><span class="keyword">class</span>.<span class="title">java</span>)</span></span><br></pre></td></tr></table></figure>
+
+<p>完成<code>Enttity</code>这个实体类, 使用<code>converter-moshi</code>的时候，一定要注意在实体类上添加注解<code>@JsonClass(generateAdapter = true)</code>。</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@JsonClass(generateAdapter = true)</span></span><br><span class="line"><span class="keyword">data</span> <span class="class"><span class="keyword">class</span> <span class="title">Enttity</span></span>(</span><br><span class="line">    <span class="keyword">val</span> <span class="keyword">data</span>: List&lt;Data&gt;,</span><br><span class="line">    <span class="keyword">val</span> errorCode: String,</span><br><span class="line">    <span class="keyword">val</span> errorMsg: String</span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="meta">@JsonClass(generateAdapter = true)</span></span><br><span class="line"><span class="keyword">data</span> <span class="class"><span class="keyword">class</span> <span class="title">Data</span></span>(</span><br><span class="line">    <span class="keyword">val</span> id: <span class="built_in">Int</span>,</span><br><span class="line">    <span class="keyword">val</span> name: String</span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+
+<p>现在可以调用网络请求接口试一下了。</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">Api.a()</span><br><span class="line">    .subscribeOn(Schedulers.io())</span><br><span class="line">    .observeOn(AndroidSchedulers.mainThread())</span><br><span class="line">    .subscribe &#123; </span><br><span class="line">        Log.d(TAG, it.toString())</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<h2 id="简化"><a href="#简化" class="headerlink" title="简化"></a>简化</h2><p>按照上面的搭建，我们会发现每一次调用网络请求接口，都需要手动去切换线程<code>.subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())</code>。在网络请求接口非常多时候，这可不是一个好办法。接下来使用<code>compose</code>操作符把线程切换封装起来。</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">fun</span> <span class="type">&lt;T&gt;</span> <span class="title">applySchedulers</span><span class="params">()</span></span>: ObservableTransformer&lt;T, T&gt; &#123;</span><br><span class="line">    <span class="keyword">return</span> ObservableTransformer&lt;T, T&gt; &#123;</span><br><span class="line">        it.subscribeOn(Schedulers.io())</span><br><span class="line">            .observeOn(AndroidSchedulers.mainThread())</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">Api.a()</span><br><span class="line">    .compose(applySchedulers())</span><br><span class="line">    .subscribe &#123;</span><br><span class="line">        Log.d(TAG, it.toString())</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<h2 id="处理内存泄漏"><a href="#处理内存泄漏" class="headerlink" title="处理内存泄漏"></a>处理内存泄漏</h2><p>以往处理内存泄漏的方法是使用<code>RxLifecycle</code>，但是这种方法需要自己的<code>Activty</code>去继承<code>RxAppCompatActivity</code>, 侵入性比较高。使用<code>AutoDispose</code>可以完美解决这个问题，只需要添加一张代码即可。</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">Api.a()</span><br><span class="line">    .compose(applySchedulers())</span><br><span class="line">    .autoDispose(<span class="keyword">this</span>) <span class="comment">// 只需要一行代码</span></span><br><span class="line">    .subscribeBy &#123;</span><br><span class="line">        Log.d(TAG, it.toString())</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<p>这里传入的<code>this</code>是<code>LifecycleOwner</code>类型， 通过查看<code>AppCompatActivity</code>可以发现它的基类<code>ComponentActivity</code>实现了<code>LifecycleOwner</code>接口。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ComponentActivity</span> <span class="keyword">extends</span> <span class="title">androidx</span>.<span class="title">core</span>.<span class="title">app</span>.<span class="title">ComponentActivity</span> <span class="keyword">implements</span></span></span><br><span class="line"><span class="class">        <span class="title">LifecycleOwner</span>,</span></span><br><span class="line"><span class="class">        <span class="title">ViewModelStoreOwner</span>,</span></span><br><span class="line"><span class="class">        <span class="title">SavedStateRegistryOwner</span>,</span></span><br><span class="line"><span class="class">        <span class="title">OnBackPressedDispatcherOwner</span> </span>&#123;···&#125;</span><br></pre></td></tr></table></figure>
+<p>那么<code>autoDispose(this)</code>会在什么时候自动取消订阅呢，通过查阅源码可以发现取消订阅的生命周期与<code>Activity</code>的生命周期是对应的。</p>
+<table>
+<thead>
+<tr>
+<th>Activity</th>
+<th>AutoDispose</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>onCreate</td>
+<td>onDestroy</td>
+</tr>
+<tr>
+<td>onStart</td>
+<td>onStop</td>
+</tr>
+<tr>
+<td>onResume</td>
+<td>onPause</td>
+</tr>
+<tr>
+<td>onPause</td>
+<td>onStop</td>
+</tr>
+</tbody></table>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">autodispose2.androidx.lifecycle.AndroidLifecycleScopeProvider</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">final</span> <span class="class"><span class="keyword">class</span> <span class="title">AndroidLifecycleScopeProvider</span></span></span><br><span class="line"><span class="class">    <span class="keyword">implements</span> <span class="title">LifecycleScopeProvider</span>&lt;<span class="title">Lifecycle</span>.<span class="title">Event</span>&gt; </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> CorrespondingEventsFunction&lt;Lifecycle.Event&gt;   DEFAULT_CORRESPONDING_EVENTS =</span><br><span class="line">      lastEvent -&gt; &#123;</span><br><span class="line">        <span class="keyword">switch</span> (lastEvent) &#123;</span><br><span class="line">          <span class="keyword">case</span> ON_CREATE:</span><br><span class="line">            <span class="keyword">return</span> Lifecycle.Event.ON_DESTROY;</span><br><span class="line">          <span class="keyword">case</span> ON_START:</span><br><span class="line">            <span class="keyword">return</span> Lifecycle.Event.ON_STOP;</span><br><span class="line">          <span class="keyword">case</span> ON_RESUME:</span><br><span class="line">            <span class="keyword">return</span> Lifecycle.Event.ON_PAUSE;</span><br><span class="line">          <span class="keyword">case</span> ON_PAUSE:</span><br><span class="line">            <span class="keyword">return</span> Lifecycle.Event.ON_STOP;</span><br><span class="line">          <span class="keyword">case</span> ON_STOP:</span><br><span class="line">          <span class="keyword">case</span> ON_DESTROY:</span><br><span class="line">          <span class="keyword">default</span>:</span><br><span class="line">            <span class="keyword">throw</span> <span class="keyword">new</span> LifecycleEndedException(<span class="string">"Lifecycle has ended! Last event was "</span> + lastEvent);</span><br><span class="line">        &#125;</span><br><span class="line">      &#125;;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Android/" rel="tag"># Android</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2020/04/15/BottomNavigatorView%E4%B8%8EVIewPager2%E8%81%94%E5%8A%A8/" rel="prev" title="BottomNavigatorView与VIewPager2联动">
+      <i class="fa fa-chevron-left"></i> BottomNavigatorView与VIewPager2联动
+    </a></div>
+      <div class="post-nav-item"></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#准备依赖"><span class="nav-number">1.</span> <span class="nav-text">准备依赖</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#RxJava3-RxKotlin3-Retrofit2-搭建网路请求"><span class="nav-number">2.</span> <span class="nav-text">RxJava3(RxKotlin3) + Retrofit2 搭建网路请求</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#一般的搭建方法"><span class="nav-number">2.1.</span> <span class="nav-text">一般的搭建方法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#简化"><span class="nav-number">2.2.</span> <span class="nav-text">简化</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#处理内存泄漏"><span class="nav-number">2.3.</span> <span class="nav-text">处理内存泄漏</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Zinc357"
+      src="/image/avatar.png">
+  <p class="site-author-name" itemprop="name">Zinc357</p>
+  <div class="site-description" itemprop="description">倾听 感受 思考 <br> 钓鱼 打牌 赛鸟</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">21</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">12</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/zinc357" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;zinc357" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:zzinc357@gmail.com" title="E-Mail → mailto:zzinc357@gmail.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://weibo.com/u/3631083303" title="Weibo → https:&#x2F;&#x2F;weibo.com&#x2F;u&#x2F;3631083303" rel="noopener" target="_blank"><i class="fa fa-fw fa-weibo"></i>Weibo</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Zinc357</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://mist.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

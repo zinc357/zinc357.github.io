@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 4.2.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"zinc357.github.io","root":"/","scheme":"Mist","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"always","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":false,"style":"mac"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="最近会需要把vue2写的spa项目打包成windows平台可执行的exe文件。这样就可以把之前用html+css+js开发的网页应用封装成类似客户端的应用，提升用户体验。Electron是基于Chromium 和 Node.js 来构建一个跨平台应用的，在全球最大同性交友平台上有58000多颗星星。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="使用electron打包vue2项目，使其成为可执行文件">
+<meta property="og:url" content="http://zinc357.github.io/2018/04/12/%E4%BD%BF%E7%94%A8electron%E6%89%93%E5%8C%85vue2%E9%A1%B9%E7%9B%AE%EF%BC%8C%E4%BD%BF%E5%85%B6%E6%88%90%E4%B8%BA%E5%8F%AF%E6%89%A7%E8%A1%8C%E6%96%87%E4%BB%B6/index.html">
+<meta property="og:site_name" content="英雄可不应该露出悲伤的表情">
+<meta property="og:description" content="最近会需要把vue2写的spa项目打包成windows平台可执行的exe文件。这样就可以把之前用html+css+js开发的网页应用封装成类似客户端的应用，提升用户体验。Electron是基于Chromium 和 Node.js 来构建一个跨平台应用的，在全球最大同性交友平台上有58000多颗星星。">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://ws1.sinaimg.cn/large/d86def27ly1fqa5uwgew6j20e804w0sw.jpg">
+<meta property="og:image" content="https://ws1.sinaimg.cn/large/d86def27ly1fqa66he04nj20lo0hg755.jpg">
+<meta property="og:image" content="https://ws1.sinaimg.cn/large/d86def27ly1fqa6e9o78fj20m80go3zk.jpg">
+<meta property="article:published_time" content="2018-04-12T09:13:48.000Z">
+<meta property="article:modified_time" content="2018-04-12T05:13:42.000Z">
+<meta property="article:author" content="Zinc357">
+<meta property="article:tag" content="Vue2">
+<meta property="article:tag" content="Electron">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://ws1.sinaimg.cn/large/d86def27ly1fqa5uwgew6j20e804w0sw.jpg">
+
+<link rel="canonical" href="http://zinc357.github.io/2018/04/12/%E4%BD%BF%E7%94%A8electron%E6%89%93%E5%8C%85vue2%E9%A1%B9%E7%9B%AE%EF%BC%8C%E4%BD%BF%E5%85%B6%E6%88%90%E4%B8%BA%E5%8F%AF%E6%89%A7%E8%A1%8C%E6%96%87%E4%BB%B6/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>使用electron打包vue2项目，使其成为可执行文件 | 英雄可不应该露出悲伤的表情</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">英雄可不应该露出悲伤的表情</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://zinc357.github.io/2018/04/12/%E4%BD%BF%E7%94%A8electron%E6%89%93%E5%8C%85vue2%E9%A1%B9%E7%9B%AE%EF%BC%8C%E4%BD%BF%E5%85%B6%E6%88%90%E4%B8%BA%E5%8F%AF%E6%89%A7%E8%A1%8C%E6%96%87%E4%BB%B6/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/image/avatar.png">
+      <meta itemprop="name" content="Zinc357">
+      <meta itemprop="description" content="倾听 感受 思考 <br> 钓鱼 打牌 赛鸟">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="英雄可不应该露出悲伤的表情">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          使用electron打包vue2项目，使其成为可执行文件
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2018-04-12 17:13:48 / 修改时间：13:13:42" itemprop="dateCreated datePublished" datetime="2018-04-12T17:13:48+08:00">2018-04-12</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>最近会需要把vue2写的spa项目打包成windows平台可执行的exe文件。这样就可以把之前用html+css+js开发的网页应用封装成类似客户端的应用，提升用户体验。Electron是基于Chromium 和 Node.js 来构建一个跨平台应用的，在全球最大同性交友平台上有58000多颗星星。</p>
+<a id="more"></a>
+<h2 id="第一步"><a href="#第一步" class="headerlink" title="第一步"></a>第一步</h2><p>修改config文件夹中的index.js，把打包的绝对路径修改为相对路径，这是为了避免白屏。<br><img src="https://ws1.sinaimg.cn/large/d86def27ly1fqa5uwgew6j20e804w0sw.jpg" alt=""></p>
+<h2 id="第二步"><a href="#第二步" class="headerlink" title="第二步"></a>第二步</h2><p>先上github，把electron-quick-start这个项目克隆下来，之后需要用到。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">git clone https:&#x2F;&#x2F;github.com&#x2F;electron&#x2F;electron-quick-start</span><br><span class="line">cd electron-quick-start</span><br><span class="line">cnpm install </span><br><span class="line">npm start</span><br></pre></td></tr></table></figure>
+
+<h2 id="第三步"><a href="#第三步" class="headerlink" title="第三步"></a>第三步</h2><p>在需要打包的vue项目中安装electron和electron-packager</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">cnpm install electron --save-dev &#x2F;&#x2F;安装electron </span><br><span class="line">cnpm install electron-packager --save-dev &#x2F;&#x2F;这个是打成exe文件的插件，之后要用，提前下载好</span><br></pre></td></tr></table></figure>
+<p>把第二步克隆的electron-quick-start项目中的main.js搬到vue的build文件中，并改个名字electron.js。<br>此时入口文件应该是打包后的dist文件夹中的index.html，所以这里需要更改入口页面的路径。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 此处设置入口页面</span></span><br><span class="line">mainWindow.loadURL(url.format(&#123;</span><br><span class="line">  pathname: path.join(__dirname, <span class="string">'../dist/index.html'</span>),<span class="comment">// 更改了这</span></span><br><span class="line">  protocol: <span class="string">'file:'</span>,</span><br><span class="line">  slashes: <span class="literal">true</span></span><br><span class="line">&#125;))</span><br></pre></td></tr></table></figure>
+<p>再在package.json文件中增加一条指令，用来启动electron，即：</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">"scripts": &#123;</span><br><span class="line">       "dev": "webpack-dev-server --inline --progress --config build/webpack.dev.conf.js",</span><br><span class="line">       "start": "npm run dev",</span><br><span class="line">       "build": "node build/build.js",</span><br><span class="line">       "electron_dev": "npm run build &amp;&amp; electron build/electron.js",// 这一句是增加的</span><br><span class="line">   &#125;,</span><br></pre></td></tr></table></figure>
+<p>现在可以开启dev调试了</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">npm run electron_dev</span><br></pre></td></tr></table></figure>
+<p><img src="https://ws1.sinaimg.cn/large/d86def27ly1fqa66he04nj20lo0hg755.jpg" alt=""></p>
+<h2 id="第四步"><a href="#第四步" class="headerlink" title="第四步"></a>第四步</h2><p>这是最后一步，将项目打包成可执行的exe文件。首先，打开package.json，为之前下载好的electron-packager，增加一条启动命令：</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">"scripts": &#123;</span><br><span class="line">      "dev": "webpack-dev-server --inline --progress --config build/webpack.dev.conf.js",</span><br><span class="line">      "start": "npm run dev",</span><br><span class="line">      "build": "node build/build.js",</span><br><span class="line">      "electron_dev": "npm run build &amp;&amp; electron build/electron.js",</span><br><span class="line">      <span class="comment">// 就是下面这一句</span></span><br><span class="line">      "electron_build": "electron-packager ./dist/ --platform=win32 --arch=x64 --icon=./src/assets/favicon.ico --overwrite"</span><br><span class="line">  &#125;,</span><br></pre></td></tr></table></figure>
+<p>关于这条命令，介绍如下:</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">electron-packager &lt;sourcedir&gt; &lt;appname&gt; –platform=&lt;platform&gt; –arch=&lt;arch&gt; [optional flags…]</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>sourcedir 资源路径，在本例中既是./dist/</li>
+<li>appname 打包出的exe名称</li>
+<li>platform 平台名称（windows是win32）</li>
+<li>arch 版本，本例为x64</li>
+</ul>
+<p>后边的配置项都是选填，可以设置二进制打包等，默认是没有这些的，这里只选填了exe的图标。</p>
+<p>然后，在打包后的dist文件夹下增加electron.js和package.json。<br>这个electron.js与刚刚build文件夹下的electron.js一样，不过入口页面路径应该改为相对于当前文件的路径。即：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">mainWindow.loadURL(url.format(&#123;</span><br><span class="line">  pathname: path.join(__dirname, <span class="string">'index.html'</span>), <span class="comment">//注意此处</span></span><br><span class="line">  protocol: <span class="string">'file:'</span>,</span><br><span class="line">  slashes: <span class="literal">true</span></span><br><span class="line">&#125;))</span><br></pre></td></tr></table></figure>
+<p>这个package.json与最开始electron-quick-start项目中的package.json文件一致，不过里面的main应该指向从build文件夹中的electron.js。即：</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  <span class="attr">"name"</span>: <span class="string">"RFID"</span>,</span><br><span class="line">  <span class="attr">"version"</span>: <span class="string">"1.0.0"</span>,</span><br><span class="line">  <span class="attr">"description"</span>: <span class="string">"A minimal Electron application"</span>,</span><br><span class="line">  <span class="attr">"main"</span>: <span class="string">"electron.js"</span>,<span class="comment">// 注意此处</span></span><br><span class="line">  <span class="attr">"scripts"</span>: &#123;</span><br><span class="line">    <span class="attr">"start"</span>: <span class="string">"electron ."</span></span><br><span class="line">  &#125;,</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>然后开始打包</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">npm run electron_build</span><br></pre></td></tr></table></figure>
+<p>build完毕后，在项目根目录下会找到一个文件夹，双击其中的exe文件，就可以打开你的桌面应用啦。<br><img src="https://ws1.sinaimg.cn/large/d86def27ly1fqa6e9o78fj20m80go3zk.jpg" alt=""></p>
+<h2 id="转载参考"><a href="#转载参考" class="headerlink" title="转载参考"></a>转载参考</h2><p><a href="https://blog.csdn.net/m0_37604745/article/details/79303342" target="_blank" rel="noopener">VUE 2.x + electron 打包桌面应用exe</a></p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Vue2/" rel="tag"># Vue2</a>
+              <a href="/tags/Electron/" rel="tag"># Electron</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2018/02/28/vue%E8%84%9A%E6%89%8B%E6%9E%B6%E6%90%AD%E5%BB%BA%E7%9A%84%E9%A1%B9%E7%9B%AE%E9%85%8D%E7%BD%AEautoprefixer/" rel="prev" title="vue脚手架搭建的项目配置autoprefixer">
+      <i class="fa fa-chevron-left"></i> vue脚手架搭建的项目配置autoprefixer
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2018/04/26/%E5%80%BE%E5%90%AC%E3%80%81%E6%84%9F%E5%8F%97%E3%80%81%E6%80%9D%E8%80%83/" rel="next" title="倾听、感受、思考">
+      倾听、感受、思考 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#第一步"><span class="nav-number">1.</span> <span class="nav-text">第一步</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#第二步"><span class="nav-number">2.</span> <span class="nav-text">第二步</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#第三步"><span class="nav-number">3.</span> <span class="nav-text">第三步</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#第四步"><span class="nav-number">4.</span> <span class="nav-text">第四步</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#转载参考"><span class="nav-number">5.</span> <span class="nav-text">转载参考</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Zinc357"
+      src="/image/avatar.png">
+  <p class="site-author-name" itemprop="name">Zinc357</p>
+  <div class="site-description" itemprop="description">倾听 感受 思考 <br> 钓鱼 打牌 赛鸟</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">21</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">12</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/zinc357" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;zinc357" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:zzinc357@gmail.com" title="E-Mail → mailto:zzinc357@gmail.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://weibo.com/u/3631083303" title="Weibo → https:&#x2F;&#x2F;weibo.com&#x2F;u&#x2F;3631083303" rel="noopener" target="_blank"><i class="fa fa-fw fa-weibo"></i>Weibo</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Zinc357</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://mist.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

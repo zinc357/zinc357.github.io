@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 4.2.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"zinc357.github.io","root":"/","scheme":"Mist","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"always","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":false,"style":"mac"},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="使用SharePreference存储字符串什么的都很常见，但是存储对象也许有些同学会觉得很麻烦。其实很简单。下面直接看代码。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="使用Sharepreference存储对象">
+<meta property="og:url" content="http://zinc357.github.io/2017/09/27/%E4%BD%BF%E7%94%A8Sharepreference%E5%AD%98%E5%82%A8%E5%AF%B9%E8%B1%A1/index.html">
+<meta property="og:site_name" content="英雄可不应该露出悲伤的表情">
+<meta property="og:description" content="使用SharePreference存储字符串什么的都很常见，但是存储对象也许有些同学会觉得很麻烦。其实很简单。下面直接看代码。">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2017-09-27T09:13:16.000Z">
+<meta property="article:modified_time" content="2017-09-27T01:17:48.000Z">
+<meta property="article:author" content="Zinc357">
+<meta property="article:tag" content="Android">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="http://zinc357.github.io/2017/09/27/%E4%BD%BF%E7%94%A8Sharepreference%E5%AD%98%E5%82%A8%E5%AF%B9%E8%B1%A1/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>使用Sharepreference存储对象 | 英雄可不应该露出悲伤的表情</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">英雄可不应该露出悲伤的表情</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://zinc357.github.io/2017/09/27/%E4%BD%BF%E7%94%A8Sharepreference%E5%AD%98%E5%82%A8%E5%AF%B9%E8%B1%A1/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/image/avatar.png">
+      <meta itemprop="name" content="Zinc357">
+      <meta itemprop="description" content="倾听 感受 思考 <br> 钓鱼 打牌 赛鸟">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="英雄可不应该露出悲伤的表情">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          使用Sharepreference存储对象
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2017-09-27 17:13:16 / 修改时间：09:17:48" itemprop="dateCreated datePublished" datetime="2017-09-27T17:13:16+08:00">2017-09-27</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>使用SharePreference存储字符串什么的都很常见，但是存储对象也许有些同学会觉得很麻烦。其实很简单。下面直接看代码。</p>
+<a id="more"></a>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br></pre></td><td class="code"><pre><span class="line">&#x2F;**</span><br><span class="line"> * SharedPreferences工具类，可以保存object对象</span><br><span class="line"> * 存储时以object存储到本地，获取时返回的也是object对象，需要自己进行强制转换</span><br><span class="line"> * 也就是说，存的人和取的人要是同一个人才知道取出来的东西到底是个啥 ^_^</span><br><span class="line"> *&#x2F;</span><br><span class="line">public class SPUtil &#123;</span><br><span class="line"></span><br><span class="line">    &#x2F;**</span><br><span class="line">     * writeObject 方法负责写入特定类的对象的状态，以便相应的 readObject 方法可以还原它</span><br><span class="line">     * 最后，用Base64.encode将字节文件转换成Base64编码保存在String中</span><br><span class="line">     *</span><br><span class="line">     * @param object 待加密的转换为String的对象</span><br><span class="line">     * @return String   加密后的String</span><br><span class="line">     *&#x2F;</span><br><span class="line">    private static String Object2String(Object object) &#123;</span><br><span class="line">        ByteArrayOutputStream byteArrayOutputStream &#x3D; new ByteArrayOutputStream();</span><br><span class="line">        ObjectOutputStream objectOutputStream &#x3D; null;</span><br><span class="line">        try &#123;</span><br><span class="line">            objectOutputStream &#x3D; new ObjectOutputStream(byteArrayOutputStream);</span><br><span class="line">            objectOutputStream.writeObject(object);</span><br><span class="line">            String string &#x3D; new String(Base64.encode(byteArrayOutputStream.toByteArray(), Base64.DEFAULT));</span><br><span class="line">            objectOutputStream.close();</span><br><span class="line">            return string;</span><br><span class="line">        &#125; catch (IOException e) &#123;</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">            return null;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    &#x2F;**</span><br><span class="line">     * 使用Base64解密String，返回Object对象</span><br><span class="line">     *</span><br><span class="line">     * @param objectString 待解密的String</span><br><span class="line">     * @return object      解密后的object</span><br><span class="line">     *&#x2F;</span><br><span class="line">    private static Object String2Object(String objectString) &#123;</span><br><span class="line">        byte[] mobileBytes &#x3D; Base64.decode(objectString.getBytes(), Base64.DEFAULT);</span><br><span class="line">        ByteArrayInputStream byteArrayInputStream &#x3D; new ByteArrayInputStream(mobileBytes);</span><br><span class="line">        ObjectInputStream objectInputStream &#x3D; null;</span><br><span class="line">        try &#123;</span><br><span class="line">            objectInputStream &#x3D; new ObjectInputStream(byteArrayInputStream);</span><br><span class="line">            Object object &#x3D; objectInputStream.readObject();</span><br><span class="line">            objectInputStream.close();</span><br><span class="line">            return object;</span><br><span class="line">        &#125; catch (Exception e) &#123;</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">            return null;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    &#x2F;**</span><br><span class="line">     * 使用SharedPreference保存对象</span><br><span class="line">     *</span><br><span class="line">     * @param fileKey    储存文件的key</span><br><span class="line">     * @param key        储存对象的key</span><br><span class="line">     * @param saveObject 储存的对象</span><br><span class="line">     *&#x2F;</span><br><span class="line">    public static void save(String fileKey, String key, Object saveObject, Context context) &#123;</span><br><span class="line">        SharedPreferences sharedPreferences &#x3D; context.getSharedPreferences(fileKey, Activity.MODE_PRIVATE);</span><br><span class="line">        SharedPreferences.Editor editor &#x3D; sharedPreferences.edit();</span><br><span class="line">        String string &#x3D; Object2String(saveObject);</span><br><span class="line">        editor.putString(key, string);</span><br><span class="line">        editor.commit();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    &#x2F;**</span><br><span class="line">     * 获取SharedPreference保存的对象</span><br><span class="line">     *</span><br><span class="line">     * @param fileKey 储存文件的key</span><br><span class="line">     * @param key     储存对象的key</span><br><span class="line">     * @return object 返回根据key得到的对象</span><br><span class="line">     *&#x2F;</span><br><span class="line">    public static Object get(String fileKey, String key, Context context) &#123;</span><br><span class="line">        SharedPreferences sharedPreferences &#x3D; context.getSharedPreferences(fileKey, Activity.MODE_PRIVATE);</span><br><span class="line">        String string &#x3D; sharedPreferences.getString(key, null);</span><br><span class="line">        if (string !&#x3D; null) &#123;</span><br><span class="line">            Object object &#x3D; String2Object(string);</span><br><span class="line">            return object;</span><br><span class="line">        &#125; else &#123;</span><br><span class="line">            return null;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    &#x2F;**</span><br><span class="line">     * 删除SharedPreference保存的对象</span><br><span class="line">     *</span><br><span class="line">     * @param fileKey 存储文件的key</span><br><span class="line">     * @param key     存储对象的key</span><br><span class="line">     *&#x2F;</span><br><span class="line">    public static void delete(String fileKey, String key, Context context) &#123;</span><br><span class="line">        SharedPreferences sharedPreferences &#x3D; context.getSharedPreferences(fileKey, Activity.MODE_PRIVATE);</span><br><span class="line">        SharedPreferences.Editor editor &#x3D; sharedPreferences.edit();</span><br><span class="line">        editor.clear();</span><br><span class="line">        editor.apply();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Android/" rel="tag"># Android</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2017/09/21/%E8%A7%A3%E5%86%B3%E5%9C%A8Android%E5%BC%80%E5%8F%91%E4%B8%AD%E4%BD%BF%E7%94%A8XStream%E5%87%BA%E7%8E%B0%E7%9A%84%E9%97%AE%E9%A2%98/" rel="prev" title="解决在Android开发中使用XStream出现的问题">
+      <i class="fa fa-chevron-left"></i> 解决在Android开发中使用XStream出现的问题
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2017/10/14/Kotlin%E5%AE%9E%E7%8E%B0%E4%BA%8C%E5%8F%89%E6%8E%92%E5%BA%8F%E6%A0%91%EF%BC%88Binary-Sort-Tree%EF%BC%89%E7%9A%84%E6%8F%92%E5%85%A5/" rel="next" title="Kotlin实现二叉排序树（Binary Sort Tree）的插入">
+      Kotlin实现二叉排序树（Binary Sort Tree）的插入 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Zinc357"
+      src="/image/avatar.png">
+  <p class="site-author-name" itemprop="name">Zinc357</p>
+  <div class="site-description" itemprop="description">倾听 感受 思考 <br> 钓鱼 打牌 赛鸟</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">21</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">12</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/zinc357" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;zinc357" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:zzinc357@gmail.com" title="E-Mail → mailto:zzinc357@gmail.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://weibo.com/u/3631083303" title="Weibo → https:&#x2F;&#x2F;weibo.com&#x2F;u&#x2F;3631083303" rel="noopener" target="_blank"><i class="fa fa-fw fa-weibo"></i>Weibo</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Zinc357</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://mist.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>
